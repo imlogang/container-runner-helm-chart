@@ -12,42 +12,32 @@ agent:
     registry: ""
     repository: "circleci/runner-agent"
     pullPolicy: Always
-    tag: "kubernetes-3"
+    tag: "kubernetes-123"
     digest: ""
-
   pullSecrets: []
-
   matchLabels:
     app: container-agent
-
   # -- Annotations to be added to agent pods
   podAnnotations: {}
-
   # -- Security Context policies for agent pods
   podSecurityContext: {}
-
   # -- Security Context policies for agent containers
   containerSecurityContext: {}
-
   # -- Force a rolling update of the agent deployment
   forceUpdate: false
-
   # -- A dictionary of key-value pairs to set as environment variables in the container-agent app container.
   # Note that this does not set environment variables in a task, which can be done via `agent.resourceClasses` or
   # [in CircleCI](https://circleci.com/docs/set-environment-variable).
   environment: {}
-
   log:
     # -- Set the logging level for the container-agent app. Possible values are `debug`, `info`,
     # `warn`, and `error`. Note: this setting isn't to be confused with the
     # [logging sidecar container](https://circleci.com/docs/container-runner/#logging-containers) which is configured
     # under the top-level `logging` key.
     level: "info"
-
     # -- Set the logging format for the container-agent app. Possible values are `text`, `color`,
     # `json`, and `none`.
     format: "json"
-
   # -- Liveness and readiness probe values
   # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
   livenessProbe:
@@ -72,7 +62,6 @@ agent:
     timeoutSeconds: 1
     successThreshold: 1
     failureThreshold: 3
-
   # -- Agent pod resource configuration
   # Ref: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
   resources: {}
@@ -86,11 +75,9 @@ agent:
   # -- Node labels for agent pod assignment
   # Ref: https://kubernetes.io/docs/user-guide/node-selection/
   nodeSelector: {}
-
   # -- Node tolerations for agent scheduling to nodes with taints
   # Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
   tolerations: []
-
   # -- Agent affinity and anti-affinity
   # Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
   affinity: {}
@@ -139,46 +126,37 @@ agent:
     create: false
     minAvailable: 1
     maxUnavailable: 1
-
   # -- CircleCI Runner API URL
   runnerAPI: "https://runner.circleci.com"
-
   # -- A (preferably) unique name assigned to this particular container-agent instance.
   # This name will appear in your runners inventory page in the CircleCI UI.
   # If left unspecified, the name will default to the name of the deployment.
   name: ""
-
   # -- Tasks are drained during the termination grace period,
   # so this should be sufficiently long relative to the maximum run time to ensure graceful shutdown
   terminationGracePeriodSeconds: 18300 # 5 hours and 5 minutes
   maxRunTime: "5h"
-
   # -- Maximum number of tasks that can be run concurrently.
   # IMPORTANT: This concurrency is independent of, and may be limited by, the Runner concurrency of your plan.
   # Configure this value at your own risk based on the resources allocated to your cluster.
   maxConcurrentTasks: 20
-
   gc:
     # -- Enable garbage collection (GC) of Kubernetes objects such as Pods or Secrets left over from CircleCI tasks.
     # Dangling objects may occur if container runner is forcefully deleted, causing the task state-tracking to be lost.
     # GC will only remove objects labelled with `app.kubernetes.io/managed-by=circleci-container-agent`.
     enabled: true
-
     # -- The age of a Kubernetes object managed by container agent before GC deletes it.
     # This value should be slightly longer than the `agent.maxRunTime` to prevent premature removal.
     # GC may remove some objects sooner than this threshold, such as task Pod containers that fail their liveness probe.
     threshold: "5h5m"
-
     # -- Frequency of GC runs. Adjust this to balance minimal lingering K8s resources vs. system load.
     # Infrequent runs may reduce the load but could result in excess K8s resources, while frequent runs help minimize
     # resources but could increase system load.
     interval: "3m"
-
   # -- Toggle autodetection of OS and CPU architecture to request the appropriate task-agent binary in a heterogeneous cluster.
   # If toggled on, this requires container-agent to have certain cluster-wide permissions for nodes.
   # If toggled off, the cluster is assumed to be homogeneous and the OS and architecture of container-agent are used.
   autodetectPlatform: true
-
   # -- Name of the user provided secret containing resource class tokens. You can mix tokens from this secret
   # and in the secret created from tokens specified in the resourceClasses section below
   # Ref: https://circleci.com/docs/container-runner/#custom-secret
@@ -188,76 +166,71 @@ agent:
   # The resource class name needs to match the names configured below exactly to match tokens to the correct configuration
   # As Kubernetes does not allow / in secret keys, a period (.) should be substituted instead
   customSecret: ""
-
   # -- Resource class settings. The tokens specified here will be used to claim tasks & the tasks
   # will be launched with the configured configs
   # Ref: https://circleci.com/docs/container-runner/#resource-class-configuration-custom-pod
   resourceClasses: {}
-    # circleci-runner/resourceClass:
-    #   token: XXXX
-    #   metadata:
-    #     annotations:
-    #       custom.io: my-annotation
-    #   spec:
-    #     containers:
-    #       - resources:
-    #           limits:
-    #             cpu: 500m
-    #         volumeMounts:
-    #           - name: xyz
-    #             mountPath: /path/to/mount
-    #     securityContext:
-    #       runAsNonRoot: true
-    #     imagePullSecrets:
-    #       - name: my_cred
-    # circleci-runner/resourceClass2:
-    #   token: XXXX
-    #   spec:
-    #     imagePullSecrets:
-    #       - name: "other"
+  # circleci-runner/resourceClass:
+  #   token: XXXX
+  #   metadata:
+  #     annotations:
+  #       custom.io: my-annotation
+  #   spec:
+  #     containers:
+  #       - resources:
+  #           limits:
+  #             cpu: 500m
+  #         volumeMounts:
+  #           - name: xyz
+  #             mountPath: /path/to/mount
+  #     securityContext:
+  #       runAsNonRoot: true
+  #     imagePullSecrets:
+  #       - name: my_cred
+  # circleci-runner/resourceClass2:
+  #   token: XXXX
+  #   spec:
+  #     imagePullSecrets:
+  #       - name: "other"
 
   # -- Configuration for service containers. This allows different a different container spec to be passed
   # to your job's service containers. TODO: Full docs link
   serviceContainers: {}
-    # exact:
-    #   docker.io/some-repo/generic-image:a-tag:
-    #       resources:
-    #         limits:
-    #           cpu: 500m
-    # pattern:
-    #   (docker\.io)\/?my\-repo\/.*:.*:
-    #       resources:
-    #         limits:
-    #           cpu: 1
-    #           memory: 512Mi
-    # prefix:
-    #   docker.io/their-repo/:
-    #       resources:
-    #         limits:
-    #           cpu: 250m
-    # default:
-    #   resources:
-    #     limits:
-    #       cpu: 250m
-    #       memory: 256Mi
+  # exact:
+  #   docker.io/some-repo/generic-image:a-tag:
+  #       resources:
+  #         limits:
+  #           cpu: 500m
+  # pattern:
+  #   (docker\.io)\/?my\-repo\/.*:.*:
+  #       resources:
+  #         limits:
+  #           cpu: 1
+  #           memory: 512Mi
+  # prefix:
+  #   docker.io/their-repo/:
+  #       resources:
+  #         limits:
+  #           cpu: 250m
+  # default:
+  #   resources:
+  #     limits:
+  #       cpu: 250m
+  #       memory: 256Mi
 
   ## -- Resource class constraint validation checker settings. The checker will periodically validate the
   ## node constraints in the resource class spec to ensure task pods can be scheduled before claiming tasks
   constraintChecker:
     # -- Enable constraint checking (This requires at least List Node permissions)
     enable: false
-
     # -- Number of failed checks before disabling task claim
     threshold: 3
-
     # -- Check interval
     interval: 15m
-
   ssh:
     # -- Enable [rerunning jobs with SSH](https://circleci.com/docs/ssh-access-jobs/).
     # For instructions on how to set up this feature, [read the docs](https://circleci.com/docs/container-runner-installation/#enable-rerun-job-with-ssh).
     enabled: false
-
     # -- The name of the [Gateway controller](https://gateway-api.sigs.k8s.io/implementations/).
     # The rerun jobs with SSH feature relies on [Gateway API](https://gateway-api.sigs.k8s.io/)
     # and its [TCPRoute](https://gateway-api.sigs.k8s.io/guides/tcp/) resource for SSH access,
@@ -265,27 +238,22 @@ agent:
     # CircleCI currently recommends [Envoy Gateway](https://gateway.envoyproxy.io/) as a Gateway controller for this.
     # To set it up, [read the docs](https://circleci.com/docs/container-runner-installation/#1-install-envoy-gateway-to-your-cluster).
     controllerName: "gateway.envoyproxy.io/gatewayclass-controller"
-
     # -- Specify controller-specific configuration for the GatewayClass.
     # For details, refer to the [Gateway API reference](https://gateway-api.sigs.k8s.io/api-types/gatewayclass/#gatewayclass-parameters),
     # and the documentation for the Gateway controller specified by `agent.ssh.controllerName`.
     parametersRef: {}
-
     # -- Option to use an existing GatewayClass instead of creating a new one.
     # The GatewayClass is a cluster-scoped resource defined by the infrastructure provider, which you may wish to manage externally.
     # Note that the configuration specific to SSH routing is defined in the namespace-scoped Gateway resource.
     # For further information, see the [Gateway API reference](https://gateway-api.sigs.k8s.io/api-types/gatewayclass/#gatewayclass),
     # and the documentation for the Gateway controller specified by `agent.ssh.controllerName`.
     existingGatewayClassName: ""
-
     # -- Define the start port for SSH. This, combined with `agent.ssh.numPorts`, is used to define a range of ports.
     # Be aware that you may need to configure your firewall or security groups to allow this port range.
     startPort: 54782
-
     # -- Specify the total number of ports for SSH. This, along with `agent.ssh.startPort`, sets the port range.
     # Note that the number of concurrent jobs rerun using SSH will be limited by the size of this range.
     numPorts: 20
-
 # -- Configures the orchestrator init container, which initializes the primary container environment.
 # For more details, see the runner-init project's [README](https://github.com/circleci/runner-init?tab=readme-ov-file#runner-init--goat).
 orchestrator:
@@ -300,14 +268,12 @@ orchestrator:
     repository: ""
     tag: ""
     digest: ""
-
 # -- Kubernetes service account settings
 serviceAccount:
   create: true
   name: ""
   automountServiceAccountToken: true
   annotations: {}
-
 # -- Kubernetes Roles Based Access Control settings
 rbac:
   create: true
@@ -317,7 +283,6 @@ rbac:
   clusterRole:
     name: ""
     rules: []
-
 # -- Configuration values for the logging containers.
 # These containers run alongside service containers and stream their logs to the CircleCI UI
 logging:
@@ -327,8 +292,7 @@ logging:
     # -- Repository name for the logging collector image
     repository: "circleci/logging-collector"
     # -- Image tag for the logging collector. Should match container agent version to ensure compatibility.
-    tag: 3
-
+    tag: "123"
   # -- Service account for the logging collector container that gets mounted in task pods
   # when service containers are present. Requires minimal permissions to collect service container logs.
   serviceAccount:
@@ -338,13 +302,11 @@ logging:
     name: "logging-collector"
     # -- Annotations to add to the service account
     annotations: {}
-
     # -- Secret containing the service account token that gets mounted in the logging container
     # of the task pod when service containers are present
     secret:
       # -- Name of the secret containing the token
       name: "logging-collector-token"
-
   # -- RBAC configuration for the logging collector service account
   rbac:
     # -- Whether to create RBAC resources
@@ -355,21 +317,18 @@ logging:
       # -- Additional rules for the role
       # See https://circleci.com/docs/container-runner/#container-permissions for minimal required permissions
       rules: []
-
 # -- Proxy Support for Container Agent
 proxy:
   # -- If false, all proxy settings are ignored
   enabled: false
-
   # -- Proxy for HTTP requests
   http:
     host: proxy.example.com
     port: 3128
     auth:
       enabled: false
-      username: 
-      password: 
-
+      username:
+      password:
   # -- Proxy for HTTPS requests
   https:
     host: proxy.example.com
@@ -378,6 +337,5 @@ proxy:
       enabled: false
       username:
       password:
-
   # -- List of hostnames, IP CIDR blocks exempt from proxying. Loopback and intra-service traffic is never proxied.
   no_proxy: []
